@@ -1,0 +1,108 @@
+<app-spinner *ngIf="loading"></app-spinner>
+<div class="mx-5">
+  <h2 class="text-lg font-semibold mt-3">Categories</h2>
+  <button
+    type="button"
+    (click)="openCategoryDialog()"
+    class="mb-3 bg-green hover:opacity-90 transition-opacity text-white px-3 py-2 rounded text-sm mt-5"
+  >
+    Add Category
+  </button>
+  <div class="mt-5 flex flex-col gap-3">
+    <div
+      *ngFor="
+        let category of categories
+          | paginate
+            : {
+                id: 'categories',
+                itemsPerPage: limit,
+                currentPage: page,
+                totalItems: count
+              };
+        let i = index
+      "
+      [ngClass]="{
+        'text-green bg-[#EDF6EA]':
+          (_categoryService.activeCategory | async)?.id === category.id,
+        ' hover:bg-[#EDF6EA] hover:text-green hover:rounded-md text-[#A6A6A6] text-sm ': true
+      }"
+    >
+      <div
+        *ngIf="categories.length; else noCategory"
+        class="px-3 py-3 flex flex-col md:flex-row md:items-center gap-2 justify-between cursor-pointer"
+      >
+        <div
+          (click)="_categoryService.activeCategory.next(category)"
+          class="flex items-center gap-3"
+        >
+          <mat-icon>folder</mat-icon> {{ category.name }}
+        </div>
+        <div class="flex items-center gap-3">
+          <mat-icon
+            (click)="openCategoryDialog(category)"
+            class="cursor-pointer"
+            matListItemIcon
+            >edit</mat-icon
+          >
+          <mat-icon
+            (click)="openDeleteDialog(category.id)"
+            class="cursor-pointer"
+            color="warn"
+            matListItemIcon
+            >delete</mat-icon
+          >
+        </div>
+      </div>
+      <ng-template #noCategory></ng-template>
+    </div>
+  </div>
+  <div>
+    <div class="flex justify-end mt-5">
+      <pagination-controls
+        id="categories"
+        [responsive]="true"
+        previousLabel="Previous"
+        nextLabel="Next"
+        (pageChange)="onDataChange($event)"
+      >
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+<!-- Add or Edit Category Form -->
+<ng-template #addEditCategory let-data>
+  <form
+    [formGroup]="categoryForm"
+    (ngSubmit)="onSubmit(data?.id)"
+    class="bg-white rounded-md py-8 px-8 shadow-md"
+  >
+    <p class="mb-5 font-medium">{{ data ? "Edit" : "Add" }} Category</p>
+    <div class="flex flex-col gap-4">
+      <div>
+        <label class="mb-2" for="name">Name</label>
+        <input
+          class="rounded border border-[#C3C3C3] bg-white h-[34px] px-3 text-[13px] focus:outline-none focus:ring-0 focus:border-green w-full max-w-[600px]"
+          type="text"
+          id="name"
+          formControlName="name"
+        />
+      </div>
+      <div>
+        <label class="mb-2" for="description">Description</label>
+        <input
+          class="rounded border border-[#C3C3C3] bg-white h-[34px] px-3 text-[13px] focus:outline-none focus:ring-0 focus:border-green w-full max-w-[600px]"
+          type="text"
+          id="description"
+          formControlName="description"
+        />
+      </div>
+    </div>
+    <button
+      class="mt-3 flex items-center text-white bg-green hover:opacity-90 transition-opacity rounded text-sm px-4 py-2 disabled:cursor-not-allowed disabled:opacity-95"
+      [disabled]="!categoryForm.valid"
+    >
+      {{ data ? "Edit" : "Add" }}
+    </button>
+  </form>
+</ng-template>

@@ -1,0 +1,125 @@
+<app-spinner *ngIf="loading"></app-spinner>
+<div class="max-w-[700px]">
+  <p *ngIf="!activeCategory" class="text-red-400 mb-2 text-center">
+    Select a category on the left to view books under it
+  </p>
+</div>
+<h1 class="text-xl mb-5">
+  <div>
+    <span class="font-semibold">Category: </span>
+    <span class="font-medium">{{ activeCategory?.name }}</span>
+  </div>
+</h1>
+
+<!-- <div
+  class="flex items-center justify-center max-w-[700px]"
+  *ngIf="!activeCategory"
+>
+  <img src="assets/images/empty.png" alt="empty state" />
+</div> -->
+
+<div *ngIf="activeCategory" class="max-w-[700px]">
+  <div class="font-semibold text-lg my-5 flex items-center justify-between">
+    <span>Books</span>
+    <button
+      type="button"
+      (click)="openBookDialog()"
+      class="mb-3 bg-green hover:opacity-90 transition-opacity text-white px-3 py-2 rounded text-sm mt-5"
+    >
+      Add Book
+    </button>
+  </div>
+  <ul
+    *ngIf="books.length; else noBooks"
+    class="flex flex-col gap-3 max-w-[700px]"
+  >
+    <li
+      *ngFor="let book of books"
+      class="flex flex-col md:flex-row justify-between gap-6 border-b border-gray-400 py-3"
+    >
+      <div class="flex items-center gap-3">
+        <span class="hidden md:flex"
+          ><mat-icon class="text-gray-400" matListItemIcon
+            ><span class="material-icons"> menu_book </span></mat-icon
+          ></span
+        >{{ book.title }}
+      </div>
+      <div class="flex items-center gap-3">
+        <mat-icon
+          (click)="openBookDialog(book, true)"
+          class="cursor-pointer"
+          matListItemIcon
+          >edit</mat-icon
+        >
+        <mat-icon
+          (click)="openDeleteDialog(book.id)"
+          class="cursor-pointer"
+          color="warn"
+          matListItemIcon
+          >delete</mat-icon
+        >
+      </div>
+    </li>
+  </ul>
+  <!-- No Books -->
+  <ng-template #noBooks>
+    <div class="bg-green max-w-[700px] text-white py-3 rounded-md text-center">
+      No books in this category
+    </div>
+  </ng-template>
+</div>
+
+<ng-template #addEditBook let-data>
+  <form
+    [formGroup]="bookForm"
+    (ngSubmit)="onSubmit(data?.id)"
+    class="bg-white rounded-md py-8 px-8 shadow-md"
+  >
+    <p class="mb-5 font-medium">Add Book</p>
+    <div class="flex flex-col gap-4">
+      <div>
+        <label class="mb-2" for="authors">Author(s)</label>
+        <input
+          class="rounded border border-[#C3C3C3] bg-white h-[34px] px-3 text-[13px] focus:outline-none focus:ring-0 focus:border-green w-full max-w-[600px]"
+          type="text"
+          id="authors"
+          formControlName="authors"
+        />
+      </div>
+      <div>
+        <label class="mb-2" for="isbn">ISBN</label>
+        <input
+          class="rounded border border-[#C3C3C3] bg-white h-[34px] px-3 text-[13px] focus:outline-none focus:ring-0 focus:border-green w-full max-w-[600px]"
+          type="text"
+          id="isbn"
+          formControlName="isbn"
+        />
+      </div>
+      <div>
+        <label class="mb-2" for="publisher">Publisher</label>
+        <input
+          class="rounded border border-[#C3C3C3] bg-white h-[34px] px-3 text-[13px] focus:outline-none focus:ring-0 focus:border-green w-full max-w-[600px]"
+          type="text"
+          id="publisher"
+          formControlName="publisher"
+        />
+      </div>
+
+      <div>
+        <label class="mb-2" for="title">Title</label>
+        <input
+          class="rounded border border-[#C3C3C3] bg-white h-[34px] px-3 text-[13px] focus:outline-none focus:ring-0 focus:border-green w-full max-w-[600px]"
+          type="text"
+          id="title"
+          formControlName="title"
+        />
+      </div>
+    </div>
+    <button
+      class="mt-3 flex items-center text-white bg-green hover:opacity-90 transition-opacity rounded text-sm px-4 py-2 disabled:cursor-not-allowed disabled:opacity-95"
+      [disabled]="!bookForm.valid"
+    >
+      Add
+    </button>
+  </form>
+</ng-template>

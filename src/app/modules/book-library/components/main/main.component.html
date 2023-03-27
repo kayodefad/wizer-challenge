@@ -1,0 +1,24 @@
+<div>
+  <div
+    *ngIf="isLargeViewport"
+    [ngClass]="{
+      hidden: !(uiService.isSidebarOpen | async),
+      'w-[90%] max-w-[350px] fixed top-[64px] h-[calc(100vh-64px)]': true
+    }"
+  >
+    <app-categories></app-categories>
+  </div>
+  <div
+    [ngClass]="{
+      'ml-[350px]': (uiService.isSidebarOpen | async) && isLargeViewport,
+      'bg-[#F4F4F4] py-8 px-8 min-h-[calc(100vh-64px)]': true
+    }"
+  >
+    <app-books></app-books>
+  </div>
+</div>
+
+<!-- Small viewport sidebar (shown in modal) -->
+<ng-template #sidebarModal>
+  <app-categories></app-categories>
+</ng-template>
